@@ -47,15 +47,15 @@ services:
     image: mlflow_server
     container_name: mlflow_server
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY}
-      - MLFLOW_S3_ENDPOINT_URL=http://localhost:9000
+      - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT}
       - MLFLOW_S3_IGNORE_TLS=true
     command: >
       mlflow server
-      --backend-store-uri postgresql://postgres:postgres@postgres/mlflow
+      --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/mlflow
       --host 0.0.0.0
       --serve-artifacts
       --artifacts-destination s3://mlflow
