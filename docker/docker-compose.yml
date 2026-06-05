@@ -53,15 +53,23 @@ services:
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY}
       - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT}
       - MLFLOW_S3_IGNORE_TLS=true
+      # Allowed hosts required > v3.5 mlflow
+      # https://mlflow.org/docs/latest/self-hosting/security/network
+      - MLFLOW_SERVER_ALLOWED_HOSTS=${MLFLOW_SERVER_ALLOWED_HOSTS}
+      - MLFLOW_SERVER_CORS_ALLOWED_ORIGINS=${MLFLOW_SERVER_CORS_ALLOWED_ORIGINS}
+
     command: >
       mlflow server
       --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/mlflow
       --host 0.0.0.0
       --serve-artifacts
       --artifacts-destination s3://mlflow
+      --allowed-hosts ${MLFLOW_SERVER_ALLOWED_HOSTS}
+      --cors-allowed-origins ${MLFLOW_SERVER_CORS_ALLOWED_ORIGINS}
     depends_on:
       - postgres
       - minio-setup
+
 
 volumes:
   postgres_data:
