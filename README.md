@@ -2,7 +2,7 @@
 
 # mlflow-setup
 
-This repository contains the code for setting up MLFlow Tracking Server with PostgreSQL as backend and MinIO as artifact store, using docker-compose.
+This repository contains the code for setting up MLFlow Tracking Server with PostgreSQL as backend and [RustFS](https://github.com/rustfs/rustfs) (an S3-compatible object store) as artifact store, using docker-compose.
 
 ## Prerequisites
 
@@ -21,6 +21,8 @@ docker compose up -d --build
 If everything is setup properly, you should be able to access the services at the following URLs:
 
 - MLFlow Tracking Server: [http://localhost:5001](http://localhost:5001)
-- MinIO Console UI: [http://localhost:9001](http://localhost:9001)
+- RustFS Console UI: [http://localhost:9001/rustfs/console/](http://localhost:9001/rustfs/console/) (log in with `RUSTFS_ACCESS_KEY` / `RUSTFS_SECRET_KEY`)
 
-![Screenshots](./docs/img/minio_mlflow_screenshot.png)
+## Migrating from MinIO
+
+Earlier versions of this repo used MinIO, which is no longer maintained. Artifacts stored in the old `minio_data` volume are not migrated automatically. To keep them, start the old MinIO container alongside RustFS and copy the `mlflow` bucket across with any S3 client (e.g. `rclone sync` or `aws s3 sync`).
